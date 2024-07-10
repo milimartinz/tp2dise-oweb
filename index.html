@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar bg-body-tertiary fixed-top" data-bs-theme="light">
+            <div class="container-fluid">
+              <h1 class="navbar-brand" href="#">Mi Planificador</h1>
+              <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menú</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                      <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#tareas">Tareas</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Otros
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#notas">Notas</a></li>
+                        <li>
+                          <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#play">Playlist</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <form class="d-flex mt-3" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Busqueda" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Buscar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </nav>
+    </header>
+    
+    <body>
+        <section>
+            <img src="img/portada.jpg" class="img-fluid" alt="portada">
+           <div class="d-flex align-items-center flex-column container-fluid">
+            <h2 class="margin-top">Bienvenidx</h2>
+            <p>¡Este planificador te ayudará a organizar tus días! <br> Organizá tus tiempos, tus tareas y agregá notas importantes...</p>
+           </div> 
+
+        </section>
+
+
+        <section class="caja" id="tareas">
+            <div>
+                <h3>Mis tareas <button id="agregarTarea">+</button></h3>
+            </div>
+            <form id="formTareas" class="oculto">
+                <div class="d-flex align-items-center flex-column m-3">
+                    <input type="text" id="inputTarea" class="input-tarea" required placeholder="Ingresá tu tarea">
+                    <label>Fecha</label>
+                    <input type="date" id="inputFecha" required>
+                    <div class="m-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="inputImportante">
+                    <label class="form-check-label" for="inputImportante">Importante</label>
+                    </div>
+                    <div>
+                      <button type= "submit" id="guardar">Guardar</button>
+                      <button type="reset" value="cancelar" id="cerrar">Cancelar</button>
+                    </div>
+                  </form>
+                </section>
+               
+                <section>
+                  <div class="table-responsive">
+                    <table class="oculto table table-bordered" id="tablaTareas">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Mi tarea</th>
+                      <th>Fecha</th>
+                      <th>Importante</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                  </tbody>
+                    </table>    
+                  </div>
+                </section>
+
+                <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                      cargarTareasGuardadas();
+                  });
+          
+                  document.querySelector("#agregarTarea").addEventListener('click', function (){
+                      document.querySelector("#formTareas").classList.remove("oculto");
+                  });
+          
+                  document.querySelector("#cerrar").addEventListener('click', function (){
+                      document.querySelector("#formTareas").classList.add("oculto");
+                  });
+          
+                  document.querySelector("#formTareas").addEventListener('submit', function(event){
+                      event.preventDefault();
+                      let tarea = document.querySelector("#inputTarea").value;
+                      let fecha = document.querySelector("#inputFecha").value;
+                      let importante = document.querySelector("#inputImportante").checked ? 'Sí' : 'No';
+          
+                      guardarTareaEnLocalStorage(tarea, fecha, importante);
+          
+                      mostrarTareaEnTabla(tarea, fecha, importante);
+          
+                      document.querySelector("#formTareas").reset();
+                      document.querySelector("#formTareas").classList.add("oculto");
+                  });
+          
+                  function guardarTareaEnLocalStorage(tarea, fecha, importante) {
+                      let tareaGuardada = `${tarea}|${fecha}|${importante}`;
+                      localStorage.setItem('tareaGuardada', tareaGuardada);
+                  }
+          
+                  function cargarTareasGuardadas() {
+                      const tareaGuardada = localStorage.getItem('tareaGuardada');
+                      if (tareaGuardada) {
+                          const [tarea, fecha, importante] = tareaGuardada.split('|');
+                          mostrarTareaEnTabla(tarea, fecha, importante);
+                      }
+                  }
+          
+                  function mostrarTareaEnTabla(tarea, fecha, importante) {
+                      const fila = document.createElement("tr");
+                      fila.innerHTML = `
+                          <td>${tarea}</td>
+                          <td>${fecha}</td>
+                          <td>${importante}</td>
+                      `;
+                      document.querySelector("#tablaTareas tbody").appendChild(fila);
+                      document.querySelector("#tablaTareas").classList.remove("oculto");
+                  }
+              </script>
+
+        </section>
+
+        <section id="notas" class="caja">
+          <h3>Notas <button id="agregarNotas">+</button></h3>
+          <form id="formNotas" class="oculto">
+              <div class="d-flex align-items-center flex-column m-3">
+                  <p>Acá podes agregar detalles importantes vos</p>
+                  <input type="text" name="notas" id="inputNota" class="input-tarea" required>
+              </div>
+              <div>
+                  <button type="submit" id="guardarNotas">Guardar</button>
+                  <button type="reset" value="cancelar" id="cerrarNotas">Cancelar</button>
+              </div>
+            </form>
+            </section>
+
+            <section>
+              <div class="table-responsive">
+                  <table class="oculto table table-bordered" id="tablaNotas">
+                      <thead class="table-dark">
+                          <tr>
+                              <th>Mis notas</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+      
+                      </tbody>
+                  </table>    
+              </div>
+          </section>
+
+          </form>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                cargarNotasGuardadas();
+            });
+    
+            document.querySelector("#agregarNotas").addEventListener('click', function (){
+                document.querySelector("#formNotas").classList.remove("oculto");
+            });
+    
+            document.querySelector("#cerrarNotas").addEventListener('click', function (){
+                document.querySelector("#formNotas").classList.add("oculto");
+            });
+    
+            document.querySelector("#formNotas").addEventListener('submit', function(event){
+                event.preventDefault();
+                let nota = document.querySelector("#inputNota").value;
+                const fila = document.createElement("tr");
+                fila.innerHTML = `<td>${nota}</td>`;
+                document.querySelector("#tablaNotas tbody").appendChild(fila);
+                document.querySelector("#tablaNotas").classList.remove("oculto");
+                document.querySelector("#formNotas").reset();
+                document.querySelector("#formNotas").classList.add("oculto");
+                
+                localStorage.setItem("notaGuardada", nota);            
+            });
+    
+            function cargarNotasGuardadas() {
+                const notaGuardada = localStorage.getItem("notaGuardada");
+                if (notaGuardada) {
+                    const fila = document.createElement("tr");
+                    fila.innerHTML = `<td>${notaGuardada}</td>`;
+                    document.querySelector("#tablaNotas tbody").appendChild(fila);
+                    document.querySelector("#tablaNotas").classList.remove("oculto");
+                }
+            }
+        </script>
+      </section>
+
+        <section class="d-flex align-items-center flex-column container-fluid">
+          <iframe src="https://calendar.google.com/calendar/embed?height=400&wkst=2&ctz=America%2FArgentina%2FBuenos_Aires&bgcolor=%23ffffff&showTitle=0&showPrint=0&showCalendars=0&showTz=0&src=ZXMuYXIjaG9saWRheUBncm91cC52LmNhbGVuZGFyLmdvb2dsZS5jb20&color=%230B8043" style="border-width:0" width="600" height="400" frameborder="0" scrolling="no"></iframe>
+        </section>
+
+        <section id="playlist" class="d-flex align-items-center flex-column container-fluid">
+            <h2>¡Playlist del día para acompañarte hoy!</h2>
+            <iframe width="1045" height="588" src="https://www.youtube.com/embed/-7s5pAQw9-g?list=RDGMEMP-96bLtob-xyvCobnxVfyw" title="Jorja Smith - Cry Me A River (Justin Timberlake cover) in the Live Lounge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </section>
+    </body>
+    <footer class="footer">
+       <p>© Copyright Milagros Martinez. Todos los derechos reservados</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

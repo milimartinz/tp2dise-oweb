@@ -1,0 +1,65 @@
+body{
+    padding-top: 60px;
+    margin: 0;
+}
+
+button{
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+h2{
+    margin-top: 30px;
+    color: #ff9fcd;
+}
+
+.caja{
+    background-color: #ff9fcd;
+    border-radius: 20px;
+    width: auto;
+    margin-top: 20px;
+    padding: 20px;
+    text-align: center;
+
+}
+
+.footer{
+    background-color: #ff9fcd;
+    height: 10%;
+    display: flex;
+    align-items: end;
+    color: white;
+    padding-left: 16px;
+    width: auto;
+}
+
+iframe{
+    margin: 20px;
+}
+
+p{
+    text-align: center;
+}
+
+.input-tarea{
+    width: 500px;
+}
+
+.oculto{
+    display: none;
+}
+
+
+.table{
+    border: 2px solid #ff9fcd;
+    margin: 20px 0;
+
+}
+
+th, td {
+    padding: auto;
+    text-align: center;
+}
